@@ -22,8 +22,16 @@ public class Cuenta {
     saldo = montoInicial;
   }
 
-  public void setMovimientos(List<Movimiento> movimientos) {
-    this.movimientos = movimientos;
+  public List<Movimiento> getMovimientos() {
+    return movimientos;
+  }
+
+  public double getSaldo() {
+    return saldo;
+  }
+
+  public void setSaldo(double saldo) {
+    this.saldo = saldo;
   }
 
   public void depositar(double monto) {
@@ -42,25 +50,6 @@ public class Cuenta {
   public void agregarMovimiento(Movimiento movimiento) {
     movimientos.add(movimiento);
     saldo += movimiento.signoMonto();
-  }
-
-  public double getMontoExtraidoA(LocalDate fecha) {
-    return getMovimientos().stream()
-        .filter(movimiento -> !movimiento.isDeposito() && movimiento.getFecha().equals(fecha))
-        .mapToDouble(Movimiento::getMonto)
-        .sum();
-  }
-
-  public List<Movimiento> getMovimientos() {
-    return movimientos;
-  }
-
-  public double getSaldo() {
-    return saldo;
-  }
-
-  public void setSaldo(double saldo) {
-    this.saldo = saldo;
   }
 
   public void chequearMontoNegativo(Double monto){
@@ -92,4 +81,11 @@ public class Cuenta {
   public double getMontoDeExtraccionPosibleHoy() {
       return 1000 - getMontoExtraidoA(LocalDate.now());
     }
+
+  public double getMontoExtraidoA(LocalDate fecha) {
+    return getMovimientos().stream()
+        .filter(movimiento -> !movimiento.isDeposito() && movimiento.getFecha().equals(fecha))
+        .mapToDouble(Movimiento::getMonto)
+        .sum();
+  }
 }

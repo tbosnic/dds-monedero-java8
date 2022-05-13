@@ -28,17 +28,4 @@ public abstract class Movimiento {
 
   public abstract double signoMonto();
 
-
-  public boolean fueDepositado(LocalDate fecha) {
-    return isDeposito() && esDeLaFecha(fecha);
-  }
-
-  public boolean fueExtraido(LocalDate fecha) {
-    return !isDeposito() && esDeLaFecha(fecha);
-  }
-
-  public boolean esDeLaFecha(LocalDate fecha) {
-    return this.fecha.equals(fecha);
-  }
-
 }
