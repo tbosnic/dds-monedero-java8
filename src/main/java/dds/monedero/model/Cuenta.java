@@ -2,8 +2,8 @@ package dds.monedero.model;
 
 import dds.monedero.exceptions.*;
 import dds.monedero.model.movimiento.Deposito;
+import dds.monedero.model.movimiento.Extraccion;
 import dds.monedero.model.movimiento.Movimiento;
-import dds.monedero.model.movimiento.TipoMovimiento;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class Cuenta {
     chequearMontoNegativo(monto);
     chequearMontoExtraccionDisponible(monto);
     chequearLimiteExtraccionDiario(monto);
-    agregarMovimiento(new Deposito(LocalDate.now(), monto));
+    agregarMovimiento(new Extraccion(LocalDate.now(), monto));
   }
 
   public void agregarMovimiento(Movimiento movimiento) {
