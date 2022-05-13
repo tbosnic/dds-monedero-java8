@@ -26,30 +26,16 @@ public class Cuenta {
     this.movimientos = movimientos;
   }
 
-  public void depositar(double cuanto) {
-    if (cuanto <= 0) {
-      throw new CuentaException(cuanto + ": el monto a ingresar debe ser un valor positivo");
-    }
-
-    if (getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count() >= 3) {
-      throw new CuentaException("Ya excedio los " + 3 + " depositos diarios");
-    }
+  public void depositar(double monto) {
+    chequearMontoNegativo(monto);
+    chequearCantidadDepositosDiarios();
+    agregarMovimiento(new Deposito(LocalDate.now(), monto));
   }
 
   public void extraer(double monto) {
-    if (monto <= 0) {
-      throw new CuentaException(monto + ": el monto a ingresar debe ser un valor positivo");
-    }
-    if (getSaldo() - monto < 0) {
-      throw new CuentaException("No puede sacar mas de " + getSaldo() + " $");
-    }
-    double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
-    double limite = 1000 - montoExtraidoHoy;
-    if (monto > limite) {
-      throw new CuentaException("No puede extraer mas de $ " + 1000
-          + " diarios, límite: " + limite);
-    }
-
+    chequearMontoNegativo(monto);
+    chequearMontoExtraccionDisponible(monto);
+    chequearLimiteExtraccionDiario(monto);
     agregarMovimiento(new Deposito(LocalDate.now(), monto));
   }
 
@@ -77,4 +63,33 @@ public class Cuenta {
     this.saldo = saldo;
   }
 
+  public void chequearMontoNegativo(Double monto){
+    if (monto < 0) {
+      throw new CuentaException(monto + ": el monto a ingresar debe ser un valor positivo");
+    }
+  }
+
+  public void chequearCantidadDepositosDiarios() {
+    if (movimientos.stream().filter(Movimiento::isDeposito).count() >= 3) {
+      throw new CuentaException("Ya excedio los " + 3 + " depositos diarios");
+    }
+  }
+
+  public void chequearMontoExtraccionDisponible(double monto) {
+    if (saldo - monto < 0) {
+      throw new CuentaException("No puede sacar mas de " + saldo + " $");
+    }
+  }
+
+  public void chequearLimiteExtraccionDiario(double monto) {
+    double limite = this.getMontoDeExtraccionPosibleHoy();
+    if (monto > limite) {
+      throw new CuentaException("No puede extraer mas de $ " + 1000
+          + " diarios, límite: " + limite);
+    }
+  }
+
+  public double getMontoDeExtraccionPosibleHoy() {
+      return 1000 - getMontoExtraidoA(LocalDate.now());
+    }
 }
